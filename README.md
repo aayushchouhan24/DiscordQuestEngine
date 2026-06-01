@@ -8,6 +8,14 @@ If this project helped you, consider dropping a follow on my Instagram ❤️
 
 Discord may block access to DevTools by default.
 
+Platform scripts live in:
+
+- [win](win)
+- [mac](mac)
+- [linux](linux)
+
+Each script backs up `settings.json`, enables the Discord DevTools flag, and tells you how to restart Discord.
+
 ### Windows
 
 1. Completely close Discord.
