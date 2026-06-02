@@ -12,10 +12,12 @@
 
 ## 🌟 Highlights
 
+- **Auto-Enroll & Accept:** Automatically detects and enrolls in all available quests!
 - **Parallel Processing:** Run multiple quests concurrently! No more waiting for them one by one.
+- **Rate-Limit Protection:** Safely detects API cooldowns (429 errors) and halts to protect your account from spamming requests.
 - **Console Native:** Runs directly from Discord's DevTools. No weird external executables required.
 - **Smart Hooks:** Seamlessly hooks into Discord's internal streaming and game detection logic.
-- **Easy Unlock:** Ships with quick scripts to unlock your Developer Tools on Windows, macOS, and Linux.
+- **Safe Universal Unlocker:** Ships with quick scripts to unlock your Developer Tools gracefully across Standard, PTB, and Canary branches on Windows, macOS, and Linux.
 
 ---
 
@@ -60,7 +62,7 @@ curl -sSL "https://raw.githubusercontent.com/aayushchouhan24/DiscordQuestEngine/
 Paste and run this snippet in the Console. Since the file is hosted on Discord's own CDN, it bypasses the security block!
 
 ```js
-fetch('https://cdn.discordapp.com/attachments/828955596417531925/1511164159453036717/engine.js?ex=6a1f74cb&is=6a1e234b&hm=f8f91887ff2ea7ae6293f5cfb368aece819750f72ffe4a93a25f9ae12dc7bda4&')
+fetch('https://cdn.discordapp.com/attachments/1167853362956472390/1511181697348010155/engine.js?ex=6a1f8521&is=6a1e33a1&hm=336df3cccf5fd24a176018795a2c1b2b236ff58ea9ab4968734d5dad16328f7a&')
   .then(r => r.text())
   .then(code => {
     const blob = new Blob([code], {type: 'text/javascript'});

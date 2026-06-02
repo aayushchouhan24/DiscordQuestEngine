@@ -515,13 +515,49 @@
             }
         }
 
-        function selectedQuests() {
-            return getQuestEntries().filter(q => selected.has(q.id) && isQuestVisible(q) && isQuestActionable(q));
+        renderQuestList();
+
+        const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+        async function autoAcceptQuests() {
+            const quests = getQuestEntries();
+            let acceptedAny = false;
+            for (const q of quests) {
+                if (isQuestVisible(q) && !q.userStatus?.enrolledAt) {
+                    const title = q.config?.messages?.questName || q.config?.application?.name || q.id;
+                    try {
+                        uiLog(`Auto-accepting quest: ${title}...`, colors.info, '⏳');
+                        await Discord.Net.post({
+                            url: `/quests/${q.id}/enroll`,
+                            body: { location: 5 }
+                        });
+                        acceptedAny = true;
+                        uiLog(`Accepted quest: ${title}`, colors.success, '✅');
+                        renderQuestList();
+                        await sleep(1500); // Prevent 429 Rate Limits
+                    } catch (e) {
+                        uiLog(`Failed to accept: ${title}`, colors.error, '❌');
+                        console.error('[QuestEngine] Enroll Error:', e);
+                        
+                        if (e.status === 429 && e.body?.retry_after) {
+                            const minutes = Math.ceil(e.body.retry_after / 60);
+                            uiLog(`Discord Rate limit hit! Wait ~${minutes} mins for API.`, colors.warn, '⚠️');
+                            break; // Abort the loop to respect rate limit
+                        }
+                        await sleep(1500); // Sleep even on error
+                    }
+                }
+            }
+            if (acceptedAny) {
+                setTimeout(renderQuestList, 1500); // Wait for Discord's store to sync
+            }
         }
 
-        renderQuestList();
-        setTimeout(renderQuestList, 1500);
-        uiLog('Panel ready.', colors.success, '⚡');
+        autoAcceptQuests().then(() => {
+            renderQuestList();
+            setTimeout(renderQuestList, 1500);
+            uiLog('Panel ready. (Auto-accept checks complete)', colors.success, '⚡');
+        });
 
         class QuestManager {
             constructor() {

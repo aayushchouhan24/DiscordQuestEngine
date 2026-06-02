@@ -1,33 +1,51 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-settings_file="$HOME/.config/discord/settings.json"
-backup_file="$settings_file.bak"
+settings_files=(
+  "$HOME/.config/discord/settings.json"
+  "$HOME/.config/discordptb/settings.json"
+  "$HOME/.config/discordcanary/settings.json"
+  "$HOME/.var/app/com.discordapp.Discord/config/discord/settings.json"
+  "$HOME/snap/discord/current/.config/discord/settings.json"
+)
 
-if [ ! -f "$settings_file" ]; then
-  echo "Discord settings file not found at: $settings_file" >&2
-  exit 1
-fi
+found_any=false
 
-cp "$settings_file" "$backup_file"
+for settings_file in "${settings_files[@]}"; do
+  if [ -f "$settings_file" ]; then
+    found_any=true
+    backup_file="$settings_file.bak"
+    cp "$settings_file" "$backup_file"
 
-python3 - "$settings_file" <<'PY'
+    python3 - "$settings_file" <<'PY'
 import json
 import sys
 
 path = sys.argv[1]
 key = 'DANGEROUS_ENABLE_DEVTOOLS_ONLY_ENABLE_IF_YOU_KNOW_WHAT_YOURE_DOING'
 
-with open(path, 'r', encoding='utf-8') as handle:
-    data = json.load(handle)
+try:
+    with open(path, 'r', encoding='utf-8') as handle:
+        data = json.load(handle)
+except Exception:
+    data = {}
 
 data[key] = True
 
 with open(path, 'w', encoding='utf-8') as handle:
-    json.dump(data, handle, indent=2)
+    # Use standard format without BOM
+    json.dump(data, handle, indent=2, separators=(',', ': '))
     handle.write('\n')
 PY
 
-echo "Updated $settings_file"
-echo "Backup saved to $backup_file"
+    echo "Updated $settings_file"
+    echo "Backup saved to $backup_file"
+  fi
+done
+
+if [ "$found_any" = false ]; then
+  echo "Discord settings file not found in any standard locations." >&2
+  exit 1
+fi
+
 echo "Restart Discord, then press Ctrl + Shift + I to open Developer Tools."
