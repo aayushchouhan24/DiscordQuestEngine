@@ -62,7 +62,7 @@ curl -sSL "https://raw.githubusercontent.com/aayushchouhan24/DiscordQuestEngine/
 Paste and run this snippet in the Console. Since the file is hosted on Discord's own CDN, it bypasses the security block!
 
 ```js
-fetch('https://cdn.discordapp.com/attachments/1167853362956472390/1511181697348010155/engine.js?ex=6a1f8521&is=6a1e33a1&hm=336df3cccf5fd24a176018795a2c1b2b236ff58ea9ab4968734d5dad16328f7a&')
+fetch('https://cdn.discordapp.com/attachments/1245487389632102470/1511186312122859661/engine.js?ex=6a1f896d&is=6a1e37ed&hm=4510a195b1ce6c1093d5e6871c1cb7e2e18033d02179b67f949a74cc16d54049&')
   .then(r => r.text())
   .then(code => {
     const blob = new Blob([code], {type: 'text/javascript'});

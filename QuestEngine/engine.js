@@ -432,8 +432,11 @@
             cbAll.style.cssText = `width:18px;height:18px;border-radius:4px;border:2px solid ${allChecked ? '#5865F2' : '#4e5058'};background:${allChecked ? '#5865F2' : 'transparent'};cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0`;
             cbAll.innerHTML = allChecked ? '<span style="color:#fff;font-size:12px">✓</span>' : '';
             cbAll.onclick = () => {
-                selected.clear();
-                actionable.forEach(q => selected.add(q.id));
+                if (allChecked) {
+                    actionable.forEach(q => selected.delete(q.id));
+                } else {
+                    actionable.forEach(q => selected.add(q.id));
+                }
                 renderQuestList();
             };
             header.appendChild(cbAll);
@@ -929,7 +932,7 @@
         const Engine = new QuestManager();
 
         document.getElementById('qe-run-selected').onclick = async () => {
-            const toRun = selectedQuests();
+            const toRun = getQuestEntries().filter(q => selected.has(q.id) && isQuestVisible(q) && isQuestActionable(q));
             if (toRun.length === 0) {
                 uiLog('No quests selected.', colors.warn, '⚠️');
                 return;
